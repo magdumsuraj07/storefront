@@ -8,12 +8,20 @@ from rest_framework import status
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
-
+from rest_framework.permissions import IsAuthenticated
 from store.pagination import DefaultPagination
 from store.permissions import FullDjangoModelPermissions, IsAdminOrReadOnly, ViewCustomerHistoryPermission
 from .filters import ProductFilter
 from .models import Cart, CartItem, OrderItem, Product, Collection, Review, Customer
 from .serializers import AddCartItemSerializer, CartItemSerializer, CartSerializer, CollectionSerializer, CustomerSerializer, ProductSerializer, ReviewSerializer, UpdateCartItemSerializer
+from .models import Cart, CartItem, OrderItem, Product, Collection, Review, Order
+from .serializers import AddCartItemSerializer, CartItemSerializer, CartSerializer, CollectionSerializer, OrderSerializer, ProductSerializer, ReviewSerializer, UpdateCartItemSerializer
+
+
+class OrderViewSet(ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class CartItemViewSet(ModelViewSet):
