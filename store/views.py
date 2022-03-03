@@ -2,15 +2,14 @@ from django.shortcuts import get_object_or_404
 from django.db.models.aggregates import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin, UpdateModelMixin
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from store.pagination import DefaultPagination
-from store.permissions import FullDjangoModelPermissions, IsAdminOrReadOnly, ViewCustomerHistoryPermission
+from store.permissions import IsAdminOrReadOnly, ViewCustomerHistoryPermission
 from .filters import ProductFilter
 from .models import Cart, CartItem, OrderItem, Product, Collection, Review, Customer
 from .serializers import AddCartItemSerializer, CartItemSerializer, CartSerializer, CollectionSerializer, CreateOrderSerializer, CustomerSerializer, ProductSerializer, ReviewSerializer, UpdateCartItemSerializer, UpdateOrderSerializer
@@ -19,7 +18,7 @@ from .serializers import AddCartItemSerializer, CartItemSerializer, CartSerializ
 
 
 class OrderViewSet(ModelViewSet):
-    http_method_names = ['get', 'patch', 'delete', 'head', 'options']
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
 
     def get_permissions(self):
         if (self.request.method in ['PATCH', 'DELETE']):
@@ -47,15 +46,16 @@ class OrderViewSet(ModelViewSet):
 
         if (user.is_staff):
             return Order.objects.all()
-        
+
         # We can directly use get and creating a customer is
         # handled by 'create_customer_for_new_user' signal
         customer_id = Customer.objects.only('id').get(user_id=user.id)
         return Order.objects.filter(customer_id=customer_id)
-    
+
 
 class CartItemViewSet(ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
+
     def get_serializer_class(self):
         if (self.request.method == 'POST'):
             return AddCartItemSerializer
@@ -70,7 +70,7 @@ class CartItemViewSet(ModelViewSet):
         return CartItem.objects \
                        .filter(cart_id = self.kwargs['cart_pk']) \
                        .select_related('product')
-    
+
 
 class CartViewSet(CreateModelMixin,
                   RetrieveModelMixin,
