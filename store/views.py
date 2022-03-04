@@ -2,7 +2,10 @@ from django.shortcuts import get_object_or_404
 from django.db.models.aggregates import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin
+from rest_framework.mixins import (
+    CreateModelMixin, RetrieveModelMixin, DestroyModelMixin
+)
+
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
@@ -11,10 +14,16 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from store.pagination import DefaultPagination
 from store.permissions import IsAdminOrReadOnly, ViewCustomerHistoryPermission
 from .filters import ProductFilter
-from .models import Cart, CartItem, OrderItem, Product, Collection, Review, Customer
-from .serializers import AddCartItemSerializer, CartItemSerializer, CartSerializer, CollectionSerializer, CreateOrderSerializer, CustomerSerializer, ProductSerializer, ReviewSerializer, UpdateCartItemSerializer, UpdateOrderSerializer
-from .models import Cart, CartItem, OrderItem, Product, Collection, Review, Order
-from .serializers import AddCartItemSerializer, CartItemSerializer, CartSerializer, CollectionSerializer, OrderSerializer, ProductSerializer, ReviewSerializer, UpdateCartItemSerializer
+from .models import (
+    Cart, CartItem, OrderItem, Product, Collection, Review, Customer, Order
+)
+
+from .serializers import (
+    AddCartItemSerializer, CartItemSerializer, CartSerializer,
+    CollectionSerializer, CreateOrderSerializer, CustomerSerializer,
+    ProductSerializer, ReviewSerializer, UpdateCartItemSerializer,
+    UpdateOrderSerializer, OrderSerializer
+)
 
 
 class OrderViewSet(ModelViewSet):
@@ -68,7 +77,7 @@ class CartItemViewSet(ModelViewSet):
 
     def get_queryset(self):
         return CartItem.objects \
-                       .filter(cart_id = self.kwargs['cart_pk']) \
+                       .filter(cart_id=self.kwargs['cart_pk']) \
                        .select_related('product')
 
 
@@ -84,7 +93,7 @@ class ReviewViewSet(ModelViewSet):
     serializer_class = ReviewSerializer
 
     def get_queryset(self):
-        return Review.objects.filter(product_id = self.kwargs['product_pk'])
+        return Review.objects.filter(product_id=self.kwargs['product_pk'])
 
     def get_serializer_context(self):
         return {'product_id': self.kwargs['product_pk']}
@@ -110,16 +119,25 @@ class ProductViewSet(ModelViewSet):
 
 
 class CollectionViewSet(ModelViewSet):
-    queryset = Collection.objects.annotate(products_count=Count('products')).all()
+    queryset = Collection.objects \
+                         .annotate(products_count=Count('products')) \
+                         .all()
     serializer_class = CollectionSerializer
     permission_classes = [IsAdminOrReadOnly]
 
     def destroy(self, request, *args, **kwargs):
         collection = get_object_or_404(
-        Collection.objects.annotate(
-            products_count=Count('products')), pk=pk)
+                        Collection
+                        .objects
+                        .annotate(products_count=Count('products')), pk=pk
+                     )
         if collection.products.count() > 0:
-            return Response({'error': 'Collection cannot be deleted because it includes one or more products.'})
+            return Response(
+                        {
+                            'error': 'Collection cannot be deleted because \
+                                     it includes one or more products.'
+                        }
+                    )
         collection.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -133,7 +151,11 @@ class CustomerViewSet(ModelViewSet):
     def history(self, request, pk):
         return Response('ok')
 
-    @action(detail=False, methods=['GET', 'PUT'], permission_classes=[IsAuthenticated])
+    @action(
+        detail=False,
+        methods=['GET', 'PUT'],
+        permission_classes=[IsAuthenticated]
+    )
     def me(self, request):
         customer = Customer.objects.get(user_id=request.user.id)
         if (request.method == 'GET'):
