@@ -13,7 +13,11 @@ class Promotion(models.Model):
 class Collection(models.Model):
     title = models.CharField(max_length=255)
     featured_product = models.ForeignKey(
-        "Product", on_delete=models.SET_NULL, null=True, related_name="+", blank=True
+        "Product",
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="+",
+        blank=True,
     )
 
     def __str__(self) -> str:
@@ -44,6 +48,13 @@ class Product(models.Model):
         ordering = ["title"]
 
 
+class ProductImage(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="images"
+    )
+    image = models.ImageField(upload_to="store/images")
+
+
 class Customer(models.Model):
     MEMBERSHIP_BRONZE = "B"
     MEMBERSHIP_SILVER = "S"
@@ -59,7 +70,9 @@ class Customer(models.Model):
     membership = models.CharField(
         max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE
     )
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"
@@ -89,7 +102,9 @@ class Order(models.Model):
 
     placed_at = models.DateTimeField(auto_now_add=True)
     payment_status = models.CharField(
-        max_length=1, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_PENDING
+        max_length=1,
+        choices=PAYMENT_STATUS_CHOICES,
+        default=PAYMENT_STATUS_PENDING,
     )
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
 
@@ -98,7 +113,9 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name="items")
+    order = models.ForeignKey(
+        Order, on_delete=models.PROTECT, related_name="items"
+    )
     product = models.ForeignKey(
         Product, on_delete=models.PROTECT, related_name="orderitems"
     )
@@ -118,9 +135,13 @@ class Cart(models.Model):
 
 
 class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="items")
+    cart = models.ForeignKey(
+        Cart, on_delete=models.CASCADE, related_name="items"
+    )
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
+    quantity = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(1)]
+    )
 
     class Meta:
         unique_together = [["cart", "product"]]
