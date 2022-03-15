@@ -24,9 +24,7 @@ class ProductImageInline(admin.TabularInline):
 
     def thumbnail(self, instance):
         if instance.image.name != "":
-            return format_html(
-                f'<img src="{instance.image.url}" class="thumbnail" />'
-            )
+            return format_html(f'<img src="{instance.image.url}" class="thumbnail" />')
         else:
             return ""
 
@@ -89,11 +87,7 @@ class CollectionAdmin(admin.ModelAdmin):
         )
 
     def get_queryset(self, request):
-        return (
-            super()
-            .get_queryset(request)
-            .annotate(products_count=Count("products"))
-        )
+        return super().get_queryset(request).annotate(products_count=Count("products"))
 
 
 @admin.register(models.Customer)
@@ -112,14 +106,10 @@ class CustomerAdmin(admin.ModelAdmin):
             + "?"
             + urlencode({"customer__id": str(customer.id)})
         )
-        return format_html(
-            '<a href="{}">{} Orders</a>', url, customer.orders_count
-        )
+        return format_html('<a href="{}">{} Orders</a>', url, customer.orders_count)
 
     def get_queryset(self, request):
-        return (
-            super().get_queryset(request).annotate(orders_count=Count("order"))
-        )
+        return super().get_queryset(request).annotate(orders_count=Count("order"))
 
 
 class OrderItemInline(admin.TabularInline):

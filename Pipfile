@@ -15,12 +15,13 @@ djangorestframework-simplejwt = "*"
 pillow = "*"
 django-cors-headers = "*"
 django-templated-mail = "*"
+redis = "*"
+celery = "*"
+flower = "*"
 
 [dev-packages]
 black = "*"
-
-[requires]
-python_version = "3.9"
+flake8 = "*"
 
 [pipenv]
 allow_prereleases = true
