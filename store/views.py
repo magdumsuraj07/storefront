@@ -54,9 +54,7 @@ class ProductImageViewSet(ModelViewSet):
         return {"product_id": self.kwargs["product_pk"]}
 
     def get_queryset(self):
-        return ProductImage.objects.filter(
-            product_id=self.kwargs["product_pk"]
-        )
+        return ProductImage.objects.filter(product_id=self.kwargs["product_pk"])
 
 
 class ProductViewSet(ModelViewSet):
@@ -86,9 +84,7 @@ class ProductViewSet(ModelViewSet):
 
 
 class CollectionViewSet(ModelViewSet):
-    queryset = Collection.objects.annotate(
-        products_count=Count("products")
-    ).all()
+    queryset = Collection.objects.annotate(products_count=Count("products")).all()
     serializer_class = CollectionSerializer
     permission_classes = [IsAdminOrReadOnly]
 
@@ -136,9 +132,9 @@ class CartItemViewSet(ModelViewSet):
         return {"cart_id": self.kwargs["cart_pk"]}
 
     def get_queryset(self):
-        return CartItem.objects.filter(
-            cart_id=self.kwargs["cart_pk"]
-        ).select_related("product")
+        return CartItem.objects.filter(cart_id=self.kwargs["cart_pk"]).select_related(
+            "product"
+        )
 
 
 class CustomerViewSet(ModelViewSet):
