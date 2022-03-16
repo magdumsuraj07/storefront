@@ -20,8 +20,10 @@ celery = "*"
 flower = "*"
 
 [dev-packages]
-black = "*"
 flake8 = "*"
+pytest = "*"
+pytest-django = "*"
+black = "*"
 
 [pipenv]
 allow_prereleases = true
