@@ -24,6 +24,7 @@ flake8 = "*"
 pytest = "*"
 pytest-django = "*"
 black = "*"
+model-bakery = "*"
 
 [pipenv]
 allow_prereleases = true
