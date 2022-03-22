@@ -25,6 +25,7 @@ pytest = "*"
 pytest-django = "*"
 black = "*"
 model-bakery = "*"
+locust = "*"
 
 [pipenv]
 allow_prereleases = true
