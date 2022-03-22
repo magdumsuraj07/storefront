@@ -26,6 +26,7 @@ pytest-django = "*"
 black = "*"
 model-bakery = "*"
 locust = "*"
+django-silk = "*"
 
 [pipenv]
 allow_prereleases = true
